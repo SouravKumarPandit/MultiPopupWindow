@@ -4,6 +4,6 @@ this it example of how to created multiple layer popup window based on selection
 Screenshot
 ====
 
-|![](/screenshot/shadow_radius.gif)|![](/screenshot/shadow_foreground.gif)|![](/screenshot/shadow_corners.gif)|
+|![screenshot](https://raw.githubusercontent.com/SouravKumarPandit/MultiPopupWindow/master/Capture_pop.PNG)|
 
 
