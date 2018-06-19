@@ -6,12 +6,15 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -20,23 +23,17 @@ import java.util.ArrayList;
 
 public class NestedPopUpLayout implements View.OnClickListener {
     private final Context mContext;
-    public static int TOTAL_INSTANCE = -1;
+    private static int TOTAL_INSTANCE = -1;
     private int INSIDE_BLOCK = 0;
-    PopUpLinearLayout popUpLayout;
-    PopupWindow popupWindow;
-    Point point;
-    public ArrayList<String> valueArrayList;
-    public static ArrayList<PopupWindow> popupList = new ArrayList<>();
-    String[] sArrayListItem;
-    int totalSection = 3;
+    private PopUpLinearLayout popUpLayout;
+    private ArrayList<String> valueArrayList;
+    private static ArrayList<PopupWindow> popupList = new ArrayList<>();
+    private String[] sArrayListItem;
 
-    int[] location;
-    int iWidth;
-    int iHeight;
-    int OFFSET_X;
-    int OFFSET_Y;
+    private int OFFSET_X;
+    private int OFFSET_Y;
 
-    SelectedOptionListener selectedOptionListener;
+    private SelectedOptionListener selectedOptionListener;
 
     public void setSelectionOptionLstener(SelectedOptionListener selectedOptionListener)
     {
@@ -51,12 +48,13 @@ public class NestedPopUpLayout implements View.OnClickListener {
         this.sArrayListItem = optionArray;
         TOTAL_INSTANCE++;
         popUpLayout = getPopUpItems();
-        popupWindow = new PopupWindow(popUpLayout);
+        PopupWindow popupWindow = new PopupWindow(popUpLayout);
+//        dimBehind(popupWindow);
         popupWindow.setWidth(LinearLayout.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
         popupWindow.setOutsideTouchable(false);
-        popupWindow.setBackgroundDrawable(null);
+//        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
             popupWindow.setElevation(8f);
@@ -72,11 +70,11 @@ public class NestedPopUpLayout implements View.OnClickListener {
         });
 
 
-        location = new int[2];
+        int[] location = new int[2];
         view.getLocationOnScreen(location);
         int[] iSectionIn = pointInside(location[0], (int) (location[1] + view.getWidth() * 0.7));
         renderWindowOffset(iSectionIn[0], iSectionIn[1], view);
-        point = new Point(location[0], location[1]);
+        Point point = new Point(location[0], location[1]);
 //        layout.getViewTreeObserver().addOnGlobalLayoutListener(mLocationLayoutListener);
 //        layout.getViewTreeObserver().addOnGlobalLayoutListener(mAutoDismissLayoutListener);
         popupWindow.showAtLocation(popUpLayout, Gravity.NO_GRAVITY, (int) point.x + OFFSET_X, (int) point.y + OFFSET_Y);
@@ -88,8 +86,8 @@ public class NestedPopUpLayout implements View.OnClickListener {
     private void renderWindowOffset(int tooLeft, int tooRight, View view)
     {
 
-        iWidth = view.getWidth();
-        iHeight = view.getHeight();
+        int iWidth = view.getWidth();
+        int iHeight = view.getHeight();
         OFFSET_X = iWidth;
         OFFSET_Y = -iHeight / 2;
         switch (INSIDE_BLOCK)
@@ -113,6 +111,29 @@ public class NestedPopUpLayout implements View.OnClickListener {
 
     }
 
+   /* public  void dimBehind(PopupWindow popupWindow) {
+        View container;
+        if (popupWindow.getBackground() == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                container = (View) popupWindow.getContentView().getParent();
+            } else {
+                container = popupWindow.getContentView();
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                container = (View) popupWindow.getContentView().getParent().getParent();
+            } else {
+                container = (View) popupWindow.getContentView().getParent();
+            }
+        }
+        Context context = popupWindow.getContentView().getContext();
+        WindowManager wm = (WindowManager)context .getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+//        p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+//        p.dimAmount = 0.3f;
+        wm.updateViewLayout(container, p);
+    }*/
+
     public static int getScreenWidth()
     {
         return Resources.getSystem().getDisplayMetrics().widthPixels;
@@ -131,6 +152,7 @@ public class NestedPopUpLayout implements View.OnClickListener {
 
     public PopUpLinearLayout getPopUpItems()
     {
+
         PopUpLinearLayout popUpItemsList = new PopUpLinearLayout(mContext);
         popUpItemsList.setBgPaintColor(TOTAL_INSTANCE % 6);
 
@@ -222,10 +244,11 @@ public class NestedPopUpLayout implements View.OnClickListener {
     }
 
 
-    public int[] pointInside(int X, int Y)
+    private int[] pointInside(int X, int Y)
     {
         int[] inSection = new int[2];
         Rect rectBound = new Rect();
+        int totalSection = 3;
         int blockWidth = getScreenWidth() / totalSection;
         int blockHeight = getScreenHeight() / totalSection;
         int xStart = 0;
@@ -358,5 +381,3 @@ public class NestedPopUpLayout implements View.OnClickListener {
 */
 
 }
-
-
